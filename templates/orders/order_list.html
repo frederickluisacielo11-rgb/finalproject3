@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% block title %}Orders — Electron Shock{% endblock %}
+{% block page_title %}Orders{% endblock %}
+
+{% block content %}
+<div class="space-y-4">
+
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <form method="get" class="flex flex-wrap items-center gap-2 flex-1">
+      <div class="relative flex-1 min-w-[180px]">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input type="text" name="search" value="{{ search }}"
+          placeholder="Search orders..."
+          class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition"/>
+      </div>
+      <select name="status" class="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition">
+        <option value="">All Statuses</option>
+        <option value="pending" {% if status == 'pending' %}selected{% endif %}>Pending</option>
+        <option value="completed" {% if status == 'completed' %}selected{% endif %}>Completed</option>
+        <option value="cancelled" {% if status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+      </select>
+      <button type="submit" class="btn-primary py-2">Filter</button>
+      {% if search or status %}
+      <a href="{% url 'order_list' %}" class="btn-secondary py-2">Clear</a>
+      {% endif %}
+    </form>
+    <a href="{% url 'order_create' %}" class="btn-primary flex-shrink-0">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+      </svg>
+      New Order
+    </a>
+  </div>
+
+  {% if search or status %}
+  <p class="text-sm text-gray-500">{{ total_results }} result{{ total_results|pluralize }} found</p>
+  {% endif %}
+
+  <!-- Table -->
+  <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+    <table class="min-w-full divide-y divide-gray-100">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="table-th">Order #</th>
+          <th class="table-th">Customer</th>
+          <th class="table-th">Product</th>
+          <th class="table-th">Qty</th>
+          <th class="table-th">Total</th>
+          <th class="table-th">Status</th>
+          <th class="table-th">Date</th>
+          <th class="table-th text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-50">
+        {% for order in page_obj %}
+        <tr class="hover:bg-gray-50 transition-colors">
+          <td class="table-td font-mono text-xs text-gray-400">#{{ order.order_id }}</td>
+          <td class="table-td">
+            <div class="flex items-center gap-2">
+              {% if order.users.profile_picture %}
+                <img src="{{ order.users.profile_picture.url }}" class="w-7 h-7 rounded-full object-cover border border-gray-100"/>
+              {% else %}
+                <div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold">
+                  {{ order.users.full_name|slice:":1"|upper }}
+                </div>
+              {% endif %}
+              <div>
+                <p class="font-semibold text-gray-800 text-xs">{{ order.users.full_name }}</p>
+                <p class="text-gray-400 text-xs">@{{ order.users.username }}</p>
+              </div>
+            </div>
+          </td>
+          <td class="table-td">
+            <p class="font-semibold text-gray-800 text-xs">{{ order.product.name }}</p>
+            <p class="text-gray-400 text-xs">{{ order.product.brand }}</p>
+          </td>
+          <td class="table-td font-semibold text-gray-800">{{ order.quantity }}</td>
+          <td class="table-td font-semibold text-gray-800">₱{{ order.total_price }}</td>
+          <td class="table-td">
+            {% if order.status == 'completed' %}<span class="badge-green">Completed</span>
+            {% elif order.status == 'pending' %}<span class="badge-amber">Pending</span>
+            {% elif order.status == 'cancelled' %}<span class="badge-red">Cancelled</span>
+            {% endif %}
+          </td>
+          <td class="table-td text-gray-400 text-xs">{{ order.created_at|date:"M d, Y" }}</td>
+          <td class="table-td text-right">
+            <div class="flex items-center justify-end gap-2">
+              <a href="{% url 'order_update' order.pk %}" class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-primary bg-blue-50 rounded-lg hover:bg-blue-100 transition">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+                Edit
+              </a>
+              <a href="{% url 'order_delete' order.pk %}" class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+                Delete
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="8" class="px-4 py-12 text-center text-gray-400">
+            <svg class="w-10 h-10 mx-auto mb-2 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            <p class="text-sm font-medium">No orders found</p>
+            {% if search or status %}
+            <p class="text-xs mt-1">Try adjusting your filters</p>
+            {% else %}
+            <a href="{% url 'order_create' %}" class="text-primary text-xs hover:underline mt-1 inline-block">Create your first order</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if page_obj.has_other_pages %}
+  <div class="flex items-center justify-between">
+    <p class="text-sm text-gray-500">
+      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+      ({{ page_obj.paginator.count }} total)
+    </p>
+    <div class="flex items-center gap-1">
+      {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}"
+        class="px-3 py-1.5 text-xs font-semibold text-primary bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+        ← Prev
+      </a>
+      {% endif %}
+      {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <span class="px-3 py-1.5 text-xs font-bold text-white bg-primary rounded-lg">{{ num }}</span>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+        <a href="?page={{ num }}{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}"
+          class="px-3 py-1.5 text-xs font-semibold text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+          {{ num }}
+        </a>
+        {% endif %}
+      {% endfor %}
+      {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}"
+        class="px-3 py-1.5 text-xs font-semibold text-primary bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+        Next →
+      </a>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

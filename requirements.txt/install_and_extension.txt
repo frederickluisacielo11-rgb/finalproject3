@@ -1,0 +1,18 @@
+Final project install and extension 
+Install software:
+Python 
+Git
+GitHub
+Nodejs 
+Django documents 4.2.8 version 
+Extension:
+Django
+HTML CSS support 
+JavaScript (ES6) Code Snippets
+Npm intellisense
+Prettier - code formatter 
+Pylance
+Python debugger
+Python 
+Tailwind css intellisense 
+ERROR LENS

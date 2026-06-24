@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block title %}Categories — Electron Shock{% endblock %}
+{% block page_title %}Categories{% endblock %}
+
+{% block content %}
+<div class="space-y-4">
+
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <p class="text-sm text-gray-500">{{ categories|length }} total categor{{ categories|length|pluralize:"y,ies" }}</p>
+    <a href="{% url 'category_create' %}" class="btn-primary shadow-sm hover:shadow-lg hover:shadow-blue-500/20 hover:-translate-y-1 active:scale-95 transition-all duration-300">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      Add Category
+    </a>
+  </div>
+
+  <div class="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
+    <table class="min-w-full divide-y divide-gray-100">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="table-th">#</th>
+          <th class="table-th w-28">Photo</th>
+          <th class="table-th">Name</th>
+          <th class="table-th">Description</th>
+          <th class="table-th">Created</th>
+          <th class="table-th text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-50">
+        {% for category in categories %}
+        <tr class="relative border-l-4 border-transparent hover:border-blue-500 hover:bg-gray-50/90 hover:shadow-[0_4px_12px_-5px_rgba(0,0,0,0.05)] transition-all duration-200 group">
+          
+          <td class="table-td text-gray-400 font-mono text-xs align-middle">{{ category.category_id }}</td>
+          
+          <td class="table-td align-middle">
+            <div class="w-20 h-20 rounded-2xl overflow-hidden bg-slate-800 text-white font-semibold text-lg border border-gray-150 flex items-center justify-center shadow-sm group-hover:shadow-md transition-all duration-300">
+              {% if user.is_authenticated and user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}" alt="Profile" class="w-full h-full object-cover transform group-hover:scale-110 group-hover:rotate-1 transition-transform duration-300">
+              {% else %}
+                <span class="transform group-hover:scale-110 transition-transform duration-300">{{ user.username|slice:":2"|upper }}</span>
+              {% endif %}
+            </div>
+          </td>
+          
+          <td class="table-td font-semibold text-gray-800 transition-colors duration-200 group-hover:text-primary align-middle">{{ category.name }}</td>
+          
+          <td class="table-td text-gray-500 align-middle">{{ category.description|default:"—"|truncatechars:60 }}</td>
+          
+          <td class="table-td text-gray-400 text-xs align-middle">{{ category.created_at|date:"M d, Y" }}</td>
+          
+          <td class="table-td text-right align-middle">
+            <div class="flex items-center justify-end gap-2.5">
+              <a href="{% url 'category_update' category.pk %}" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-blue-600 bg-blue-50/70 border border-blue-100 rounded-lg hover:bg-blue-600 hover:text-white hover:border-transparent hover:shadow-lg hover:shadow-blue-500/20 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 subpixel-antialiased group/btn">
+                <svg class="w-3.5 h-3.5 transform group-hover/btn:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+                <span>Edit</span>
+              </a>
+              
+              <a href="{% url 'category_delete' category.pk %}" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-red-600 bg-red-50/70 border border-red-100 rounded-lg hover:bg-red-600 hover:text-white hover:border-transparent hover:shadow-lg hover:shadow-red-500/20 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 subpixel-antialiased group/btn">
+                <svg class="w-3.5 h-3.5 transform group-hover/btn:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+                <span>Delete</span>
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="px-4 py-12 text-center text-gray-400">
+            <svg class="w-10 h-10 mx-auto mb-2 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+            <p class="text-sm font-medium">No categories found</p>
+            <a href="{% url 'category_create' %}" class="text-primary text-xs hover:underline mt-1 inline-block">Add your first category</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+{% endblock %}

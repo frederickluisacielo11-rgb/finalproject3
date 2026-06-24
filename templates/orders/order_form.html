@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% block title %}{% if order %}Edit{% else %}New{% endif %} Order — Electron Shock{% endblock %}
+{% block page_title %}{% if order %}Edit Order{% else %}New Order{% endif %}{% endblock %}
+
+{% block content %}
+<div class="max-w-lg">
+  <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+
+    <p class="text-sm text-gray-500 mb-6">
+      {% if order %}Update the order status below.
+      {% else %}Fill in the details to create a new order.{% endif %}
+    </p>
+
+    <form method="post" class="space-y-5">
+      {% csrf_token %}
+
+      {% if not order %}
+      <!-- Customer -->
+      <div>
+        <label class="form-label">Customer <span class="text-red-500">*</span></label>
+        <select name="user" required class="form-input bg-white">
+          <option value="">-- Select Customer --</option>
+          {% for u in users %}
+          <option value="{{ u.pk }}">{{ u.full_name }} (@{{ u.username }})</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Product -->
+      <div>
+        <label class="form-label">Product <span class="text-red-500">*</span></label>
+        <select name="product" required class="form-input bg-white" id="productSelect">
+          <option value="">-- Select Product --</option>
+          {% for p in products %}
+          <option value="{{ p.pk }}"
+            data-price="{{ p.price }}"
+            data-stock="{{ p.quantity }}"
+            {% if not p.in_stock %}disabled{% endif %}>
+            {{ p.name }} ({{ p.brand }}) — ₱{{ p.price }}
+            {% if not p.in_stock %} [Out of Stock]{% endif %}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Stock Info -->
+      <div id="stockInfo" class="hidden text-xs text-gray-500 bg-gray-50 rounded-lg px-3 py-2">
+        Available stock: <strong id="stockCount">—</strong>
+      </div>
+
+      <!-- Quantity -->
+      <div>
+        <label class="form-label">Quantity <span class="text-red-500">*</span></label>
+        <input type="number" name="quantity" required min="1" id="quantityInput"
+          class="form-input" placeholder="Enter quantity"/>
+      </div>
+
+      <!-- Total Preview -->
+      <div id="totalPreview" class="hidden bg-blue-50 border border-blue-100 rounded-lg px-4 py-3">
+        <p class="text-xs text-gray-500">Estimated Total</p>
+        <p class="text-xl font-bold text-primary" id="totalAmount">₱0.00</p>
+      </div>
+
+      {% else %}
+      <!-- Read-only info for update -->
+      <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+        <div class="flex justify-between text-sm">
+          <span class="text-gray-500">Customer</span>
+          <span class="font-semibold text-gray-800">{{ order.users.full_name }}</span>
+        </div>
+        <div class="flex justify-between text-sm">
+          <span class="text-gray-500">Product</span>
+          <span class="font-semibold text-gray-800">{{ order.product.name }}</span>
+        </div>
+        <div class="flex justify-between text-sm">
+          <span class="text-gray-500">Quantity</span>
+          <span class="font-semibold text-gray-800">{{ order.quantity }}</span>
+        </div>
+        <div class="flex justify-between text-sm">
+          <span class="text-gray-500">Total</span>
+          <span class="font-bold text-primary">₱{{ order.total_price }}</span>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Status -->
+      <div>
+        <label class="form-label">Status <span class="text-red-500">*</span></label>
+        <select name="status" required class="form-input bg-white">
+          <option value="">-- Select Status --</option>
+          <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>Pending</option>
+          <option value="completed" {% if order.status == 'completed' %}selected{% endif %}>Completed</option>
+          <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+        </select>
+      </div>
+
+      <div class="flex items-center gap-3 pt-2 border-t border-gray-100">
+        <button type="submit" class="btn-primary">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+          {% if order %}Update Order{% else %}Place Order{% endif %}
+        </button>
+        <a href="{% url 'order_list' %}" class="btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% if not order %}
+<script>
+  const productSelect = document.getElementById('productSelect');
+  const quantityInput = document.getElementById('quantityInput');
+  const stockInfo = document.getElementById('stockInfo');
+  const stockCount = document.getElementById('stockCount');
+  const totalPreview = document.getElementById('totalPreview');
+  const totalAmount = document.getElementById('totalAmount');
+
+  function updateTotal() {
+    const selected = productSelect.options[productSelect.selectedIndex];
+    const price = parseFloat(selected.dataset.price) || 0;
+    const stock = parseInt(selected.dataset.stock) || 0;
+    const qty = parseInt(quantityInput.value) || 0;
+
+    if (price > 0) {
+      stockInfo.classList.remove('hidden');
+      stockCount.textContent = stock;
+      if (qty > 0) {
+        totalPreview.classList.remove('hidden');
+        totalAmount.textContent = '₱' + (price * qty).toFixed(2);
+      } else {
+        totalPreview.classList.add('hidden');
+      }
+    } else {
+      stockInfo.classList.add('hidden');
+      totalPreview.classList.add('hidden');
+    }
+  }
+
+  productSelect.addEventListener('change', updateTotal);
+  quantityInput.addEventListener('input', updateTotal);
+</script>
+{% endif %}
+
+{% endblock %}

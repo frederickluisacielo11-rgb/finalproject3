@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}{% if category %}Edit{% else %}Add{% endif %} Category — Electron Shock{% endblock %}
+{% block page_title %}{% if category %}Edit Category{% else %}Add Category{% endif %}{% endblock %}
+
+{% block content %}
+<div class="max-w-lg">
+  <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-all duration-300">
+
+    <p class="text-sm text-gray-500 mb-6">
+      {% if category %}Update the category details below.{% else %}Fill in the details to create a new category.{% endif %}
+    </p>
+
+    <form method="post" class="space-y-5">
+      {% csrf_token %}
+
+      <div class="group">
+        <label class="form-label transition-colors duration-200 group-focus-within:text-primary">Category Name <span class="text-red-500">*</span></label>
+        <input type="text" name="name" required
+          value="{{ category.name|default:'' }}"
+          class="form-input transition-all duration-200 focus:shadow-sm" placeholder="e.g. Electronics, Accessories"/>
+      </div>
+
+      <div class="group">
+        <label class="form-label transition-colors duration-200 group-focus-within:text-primary">Description</label>
+        <textarea name="description" rows="3"
+          class="form-input resize-none transition-all duration-200 focus:shadow-sm"
+          placeholder="Optional description...">{{ category.description|default:'' }}</textarea>
+      </div>
+
+      <div class="flex items-center gap-3 pt-2">
+        <button type="submit" class="btn-primary flex items-center gap-2 hover:shadow-md hover:-translate-y-1.5 active:translate-y-0 transition-all duration-200">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          {% if category %}Update Category{% else %}Save Category{% endif %}
+        </button>
+        <a href="{% url 'category_list' %}" class="btn-secondary hover:bg-gray-50 hover:text-gray-700 active:bg-gray-100 transition-all duration-200 text-center">Cancel</a>
+      </div>
+    </form>
+
+  </div>
+</div>
+{% endblock %}
