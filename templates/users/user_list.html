@@ -5,7 +5,6 @@
 {% block content %}
 <div class="space-y-4">
 
-  <!-- Top Bar -->
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
     <form method="get" class="flex items-center gap-2 flex-1 max-w-sm">
       <div class="relative flex-1">
@@ -27,10 +26,9 @@
   <p class="text-sm text-gray-500">{{ total_results }} result{{ total_results|pluralize }} for "<strong>{{ search }}</strong>"</p>
   {% endif %}
 
-  <!-- Table -->
-  <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+  <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
     <table class="min-w-full divide-y divide-gray-100">
-      <thead class="bg-gray-50">
+      <thead class="bg-gray-50 dark:bg-gray-700">
         <tr>
           <th class="table-th">Photo</th>
           <th class="table-th">Full Name</th>
@@ -42,7 +40,7 @@
           <th class="table-th text-right">Actions</th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-gray-50">
+      <tbody class="divide-y divide-gray-50 dark:divide-gray-700">
         {% for user in page_obj %}
         <tr class="hover:bg-gray-50 transition-colors">
           <td class="table-td">
@@ -54,7 +52,7 @@
               </div>
             {% endif %}
           </td>
-          <td class="table-td font-semibold text-gray-800">{{ user.full_name }}</td>
+          <td class="table-td font-semibold text-gray-800 dark:text-white">{{ user.full_name }}</td>
           <td class="table-td text-gray-500">@{{ user.username }}</td>
           <td class="table-td text-gray-500">{{ user.email }}</td>
           <td class="table-td capitalize text-gray-500">{{ user.gender }}</td>
@@ -91,7 +89,6 @@
     </table>
   </div>
 
-  <!-- Pagination -->
   {% if page_obj.has_other_pages %}
   <div class="flex items-center justify-between">
     <p class="text-sm text-gray-500">

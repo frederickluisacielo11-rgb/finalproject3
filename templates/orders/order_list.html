@@ -41,7 +41,7 @@
   <!-- Table -->
   <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
     <table class="min-w-full divide-y divide-gray-100">
-      <thead class="bg-gray-50">
+      <thead class="bg-gray-50 dark:bg-gray-700">
         <tr>
           <th class="table-th">Order #</th>
           <th class="table-th">Customer</th>
@@ -53,7 +53,7 @@
           <th class="table-th text-right">Actions</th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-gray-50">
+      <tbody class="divide-y divide-gray-50 dark:divide-gray-700">
         {% for order in page_obj %}
         <tr class="hover:bg-gray-50 transition-colors">
           <td class="table-td font-mono text-xs text-gray-400">#{{ order.order_id }}</td>
@@ -76,8 +76,8 @@
             <p class="font-semibold text-gray-800 text-xs">{{ order.product.name }}</p>
             <p class="text-gray-400 text-xs">{{ order.product.brand }}</p>
           </td>
-          <td class="table-td font-semibold text-gray-800">{{ order.quantity }}</td>
-          <td class="table-td font-semibold text-gray-800">₱{{ order.total_price }}</td>
+          <td class="table-td font-semibold text-gray-800 dark:text-white">{{ order.quantity }}</td>
+          <td class="table-td font-semibold text-gray-800 dark:text-white" >₱{{ order.total_price }}</td>
           <td class="table-td">
             {% if order.status == 'completed' %}<span class="badge-green">Completed</span>
             {% elif order.status == 'pending' %}<span class="badge-amber">Pending</span>

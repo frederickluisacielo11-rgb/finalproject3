@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="max-w-lg">
-  <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+  <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-6">
 
     <p class="text-sm text-gray-500 mb-6">
       {% if order %}Update the order status below.
@@ -26,7 +26,6 @@
         </select>
       </div>
 
-      <!-- Product -->
       <div>
         <label class="form-label">Product <span class="text-red-500">*</span></label>
         <select name="product" required class="form-input bg-white" id="productSelect">
@@ -43,26 +42,22 @@
         </select>
       </div>
 
-      <!-- Stock Info -->
       <div id="stockInfo" class="hidden text-xs text-gray-500 bg-gray-50 rounded-lg px-3 py-2">
         Available stock: <strong id="stockCount">—</strong>
       </div>
 
-      <!-- Quantity -->
       <div>
         <label class="form-label">Quantity <span class="text-red-500">*</span></label>
         <input type="number" name="quantity" required min="1" id="quantityInput"
           class="form-input" placeholder="Enter quantity"/>
       </div>
 
-      <!-- Total Preview -->
       <div id="totalPreview" class="hidden bg-blue-50 border border-blue-100 rounded-lg px-4 py-3">
         <p class="text-xs text-gray-500">Estimated Total</p>
         <p class="text-xl font-bold text-primary" id="totalAmount">₱0.00</p>
       </div>
 
       {% else %}
-      <!-- Read-only info for update -->
       <div class="bg-gray-50 rounded-lg p-4 space-y-2">
         <div class="flex justify-between text-sm">
           <span class="text-gray-500">Customer</span>
@@ -83,7 +78,6 @@
       </div>
       {% endif %}
 
-      <!-- Status -->
       <div>
         <label class="form-label">Status <span class="text-red-500">*</span></label>
         <select name="status" required class="form-input bg-white">

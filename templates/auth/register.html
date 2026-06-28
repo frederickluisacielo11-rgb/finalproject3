@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register — Electron Shock</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: { DEFAULT: '#1e3a5f', light: '#2a5298', dark: '#122540' },
+            accent:  { DEFAULT: '#e8a020', light: '#f5b942', dark: '#c4861a' },
+          },
+          fontFamily: { sans: ['Inter', 'ui-sans-serif'] },
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-primary-dark via-primary to-primary-light flex items-center justify-center p-4 font-sans">
+
+  <div class="w-full max-w-2xl">
+
+    <!-- Logo / Header -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-accent shadow-lg mb-4">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+        </svg>
+      </div>
+      <h1 class="text-2xl font-bold text-white">Electron Shock</h1>
+      <p class="text-blue-200 text-sm mt-1">Inventory Management System</p>
+    </div>
+
+    <!-- Card -->
+    <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-8">
+      <h2 class="text-xl font-bold text-gray-800 mb-1">Create an Account</h2>
+      <p class="text-gray-500 text-sm mb-6">Fill in your details to register</p>
+
+      <!-- Django messages -->
+      {% if messages %}
+        {% for message in messages %}
+          <div class="flex items-center gap-2 {% if message.tags == 'error' %}bg-red-50 border-red-200 text-red-700{% else %}bg-green-50 border-green-200 text-green-700{% endif %} border text-sm px-4 py-3 rounded-lg mb-5">
+            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="post" enctype="multipart/form-data" class="space-y-5">
+        {% csrf_token %}
+
+        <!-- Row 1: Full Name + Username -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Full Name <span class="text-red-500">*</span></label>
+            <input type="text" name="full_name" value="{{ form_data.full_name }}" required
+              class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition"
+              placeholder="Juan Dela Cruz"/>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Username <span class="text-red-500">*</span></label>
+            <input type="text" name="username" value="{{ form_data.username }}" required
+              class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition"
+              placeholder="juandelacruz"/>
+          </div>
+        </div>
+
+        <!-- Row 2: Email -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Email Address <span class="text-red-500">*</span></label>
+          <input type="email" name="email" value="{{ form_data.email }}" required
+            class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition"
+            placeholder="juan@example.com"/>
+        </div>
+
+        <!-- Row 3: Password + Confirm Password -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Password <span class="text-red-500">*</span></label>
+            <input type="password" name="password" required
+              class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition"
+              placeholder="Min. 8 characters"/>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Confirm Password <span class="text-red-500">*</span></label>
+            <input type="password" name="password_confirm" required
+              class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition"
+              placeholder="Repeat password"/>
+          </div>
+        </div>
+
+        <!-- Row 4: Gender + Role -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Gender <span class="text-red-500">*</span></label>
+            <select name="gender" required
+              class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition bg-white">
+              <option value="" disabled {% if not form_data.gender %}selected{% endif %}>Select gender</option>
+              <option value="male"   {% if form_data.gender == 'male' %}selected{% endif %}>Male</option>
+              <option value="female" {% if form_data.gender == 'female' %}selected{% endif %}>Female</option>
+              <option value="other"  {% if form_data.gender == 'other' %}selected{% endif %}>Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Role <span class="text-red-500">*</span></label>
+            <select name="role" required
+              class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition bg-white">
+              <option value="" disabled {% if not form_data.role %}selected{% endif %}>Select role</option>
+              <option value="admin"    {% if form_data.role == 'admin' %}selected{% endif %}>Admin</option>
+              <option value="staff"    {% if form_data.role == 'staff' %}selected{% endif %}>Staff</option>
+              <option value="customer" {% if form_data.role == 'customer' %}selected{% endif %}>Customer</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 5: Birthdate + Contact -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Birthdate <span class="text-red-500">*</span></label>
+            <input type="date" name="birthdate" value="{{ form_data.birthdate }}" required
+              class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition"/>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Contact Number <span class="text-red-500">*</span></label>
+            <input type="text" name="contact" value="{{ form_data.contact }}" required
+              class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition"
+              placeholder="09xxxxxxxxx"/>
+          </div>
+        </div>
+
+        <!-- Row 6: Address -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Address <span class="text-red-500">*</span></label>
+          <input type="text" name="address" value="{{ form_data.address }}" required
+            class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition"
+            placeholder="Street, City, Province"/>
+        </div>
+
+        <!-- Row 7: Profile Picture (optional) -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Profile Picture <span class="text-gray-400 font-normal">(optional)</span></label>
+          <input type="file" name="profile_picture" accept="image/*"
+            class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary-light transition"/>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit"
+          class="w-full py-2.5 bg-accent hover:bg-amber-600 text-white font-semibold rounded-lg text-sm transition-colors duration-200 shadow-sm mt-2">
+          Create Account
+        </button>
+      </form>
+
+      <!-- Link to login -->
+      <p class="text-center text-sm text-gray-500 mt-5">
+        Already have an account?
+        <a href="{% url 'login' %}" class="text-primary font-semibold hover:underline">Sign in</a>
+      </p>
+    </div>
+
+    <p class="text-center text-blue-200 text-xs mt-6">&copy; 2026 Electron Shock. All rights reserved.</p>
+  </div>
+
+</body>
+</html>

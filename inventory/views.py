@@ -26,20 +26,28 @@ def category_create(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         description = request.POST.get('description', '')
+        image = request.FILES.get('image')
 
         if not name:
             messages.error(request, 'Name is required.')
             return render(request, 'inventory/category_form.html', {
-                'name': name, 'description': description
+                'name': name,
+                'description': description
             })
 
         if Category.objects.filter(name=name).exists():
             messages.error(request, 'A category with this name already exists.')
             return render(request, 'inventory/category_form.html', {
-                'name': name, 'description': description
+                'name': name,
+                'description': description
             })
-        
-        Category.objects.create(name=name, description=description)
+
+        Category.objects.create(
+            name=name,
+            description=description,
+            image=image
+        )
+
         messages.success(request, 'Category added successfully!')
         return redirect('category_list')
 
@@ -55,20 +63,30 @@ def category_update(request, pk):
 
         if not name:
             messages.error(request, 'Name is required.')
-            return render(request,'inventory/category_form.html',{'category': category})
-        
+            return render(request, 'inventory/category_form.html', {
+                'category': category
+            })
+
         if Category.objects.filter(name=name).exclude(pk=pk).exists():
             messages.error(request, 'Category name already exists.')
-            return render(request, 'inventory/category_form.html', {'category': category})
-        
+            return render(request, 'inventory/category_form.html', {
+                'category': category
+            })
+
         category.name = name
         category.description = description
+
+        if request.FILES.get('image'):
+            category.image = request.FILES.get('image')
+
         category.save()
 
         messages.success(request, 'Category updated successfully!')
         return redirect('category_list')
-    
-    return render(request, 'inventory/category_form.html',{'category': category})
+
+    return render(request, 'inventory/category_form.html', {
+        'category': category
+    })
 
 
 def category_delete(request, pk):

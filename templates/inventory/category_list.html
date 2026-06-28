@@ -32,14 +32,26 @@
           <td class="table-td text-gray-400 font-mono text-xs align-middle">{{ category.category_id }}</td>
           
           <td class="table-td align-middle">
-            <div class="w-20 h-20 rounded-2xl overflow-hidden bg-slate-800 text-white font-semibold text-lg border border-gray-150 flex items-center justify-center shadow-sm group-hover:shadow-md transition-all duration-300">
-              {% if user.is_authenticated and user.profile_picture %}
-                <img src="{{ user.profile_picture.url }}" alt="Profile" class="w-full h-full object-cover transform group-hover:scale-110 group-hover:rotate-1 transition-transform duration-300">
-              {% else %}
-                <span class="transform group-hover:scale-110 transition-transform duration-300">{{ user.username|slice:":2"|upper }}</span>
-              {% endif %}
+    <div class="w-20 h-20 rounded-2xl overflow-hidden bg-slate-100 border border-gray-200 flex items-center justify-center shadow-sm group-hover:shadow-md transition-all duration-300">
+
+        {% if category.image %}
+            <img src="{{ category.image.url }}"
+                 alt="{{ category.name }}"
+                 class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-300">
+        {% else %}
+            <div class="flex flex-col items-center justify-center text-gray-400">
+                <svg class="w-8 h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-8h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <span class="text-xs">No Image</span>
             </div>
-          </td>
+        {% endif %}
+
+    </div>
+</td>
           
           <td class="table-td font-semibold text-gray-800 transition-colors duration-200 group-hover:text-primary align-middle">{{ category.name }}</td>
           

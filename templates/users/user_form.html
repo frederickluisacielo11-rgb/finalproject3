@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="max-w-2xl">
-  <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+  <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-6">
 
     <p class="text-sm text-gray-500 mb-6">
       {% if user %}Update user details below.{% else %}Fill in all required fields to add a new user.{% endif %}
@@ -15,92 +15,100 @@
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
 
-        <!-- Full Name -->
         <div class="sm:col-span-2">
           <label class="form-label">Full Name <span class="text-red-500">*</span></label>
           <input type="text" name="full_name" required
-            value="{{ user.full_name|default:'' }}"
+            value="{% if form_data.full_name %}{{ form_data.full_name }}{% elif user %}{{ user.full_name }}{% endif %}"
             class="form-input" placeholder="e.g. Juan Dela Cruz"/>
         </div>
 
-        <!-- Username -->
         <div>
           <label class="form-label">Username <span class="text-red-500">*</span></label>
           <input type="text" name="username" required
-            value="{{ user.username|default:'' }}"
+            value="{% if form_data.username %}{{ form_data.username }}{% elif user %}{{ user.username }}{% endif %}"
             class="form-input" placeholder="e.g. juandc"/>
         </div>
 
-        <!-- Email -->
         <div>
-          <label class="form-label">Email <span class="text-red-500">*</span></label>
+          <label class="form-label">Email 
+            <span class="text-red-500">*</span></label>
           <input type="email" name="email" required
-            value="{{ user.email|default:'' }}"
+            value="{% if form_data.email %}{{ form_data.email }}{% elif user %}{{ user.email }}{% endif %}"
             class="form-input" placeholder="e.g. juan@email.com"/>
         </div>
 
-        <!-- Password (only required on create) -->
-        {% if not user %}
         <div>
-          <label class="form-label">Password <span class="text-red-500">*</span></label>
-          <input type="password" name="password" required
-            class="form-input" placeholder="Enter password"/>
-        </div>
+    <label class="form-label">
+        Gender <span class="text-red-500">*</span>
+    </label>
+
+    <select name="gender" required class="form-input bg-white">
+        <option value="">-- Select Gender --</option>
+
+        <option value="male"
+            {% if form_data.gender == 'male' %}
+                selected
+            {% elif user and user.gender == 'male' %}
+                selected
+            {% endif %}>
+            Male
+        </option>
+
+        <option value="female"
+            {% if form_data.gender == 'female' %}
+                selected
+            {% elif user and user.gender == 'female' %}
+                selected
+            {% endif %}>
+            Female
+        </option>
+
+        <option value="other"
+            {% if form_data.gender == 'other' %}
+                selected
+            {% elif user and user.gender == 'other' %}
+                selected
+            {% endif %}>
+            Other
+        </option>
+    </select>
+</div>
 
         <div>
-          <label class="form-label">Confirm Password <span class="text-red-500">*</span></label>
-          <input type="password" name="confirm_password" required
-            class="form-input" placeholder="Re-enter password"/>
-        </div>
-        {% endif %}
-
-        <!-- Gender -->
-        <div>
-          <label class="form-label">Gender <span class="text-red-500">*</span></label>
-          <select name="gender" required class="form-input bg-white">
-            <option value="">-- Select Gender --</option>
-            <option value="male" {% if user.gender == 'male' %}selected{% endif %}>Male</option>
-            <option value="female" {% if user.gender == 'female' %}selected{% endif %}>Female</option>
-            <option value="other" {% if user.gender == 'other' %}selected{% endif %}>Other</option>
-          </select>
-        </div>
-
-        <!-- Role -->
-        <div>
-          <label class="form-label">Role <span class="text-red-500">*</span></label>
+          <label class="form-label">Role 
+            <span class="text-red-500">*</span></label>
           <select name="role" required class="form-input bg-white">
             <option value="">-- Select Role --</option>
-            <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
-            <option value="staff" {% if user.role == 'staff' %}selected{% endif %}>Staff</option>
-            <option value="customer" {% if user.role == 'customer' %}selected{% endif %}>Customer</option>
+            <option value="admin"{% if form_data.role|default:user.role == 'admin' %}selected{% endif %}>Admin</option>
+            <option value="staff"{% if form_data.role|default:user.role == 'staff' %}selected{% endif %}>Staff</option>
+            <option value="customer"{% if form_data.role|default:user.role == 'customer' %}selected{% endif %}>Customer</option>
           </select>
         </div>
 
-        <!-- Birthdate -->
         <div>
           <label class="form-label">Birthdate <span class="text-red-500">*</span></label>
           <input type="date" name="birthdate" required
-            value="{{ user.birthdate|date:'Y-m-d'|default:'' }}"
+            value="{% if form_data.birthdate %}
+            {{ form_data.birthdate }}{% elif user.birthdate %}
+            {{ user.birthdate|date:'Y-m-d' }}{% endif %}"
             class="form-input"/>
         </div>
 
-        <!-- Contact -->
         <div>
-          <label class="form-label">Contact Number <span class="text-red-500">*</span></label>
+          <label class="form-label">Contact Number 
+            <span class="text-red-500">*</span></label>
           <input type="text" name="contact" required
-            value="{{ user.contact|default:'' }}"
+            value="{% if form_data.contact %}{{ form_data.contact }}{% elif user %}{{ user.contact }}{% endif %}"
             class="form-input" placeholder="e.g. 09171234567"/>
         </div>
 
-        <!-- Address -->
         <div class="sm:col-span-2">
           <label class="form-label">Address <span class="text-red-500">*</span></label>
           <input type="text" name="address" required
-            value="{{ user.address|default:'' }}"
+            value="{% if form_data.address %}{{ form_data.address }}{% elif user %}{{ user.address }}{% endif %}"
             class="form-input" placeholder="e.g. 123 Rizal St, Manila"/>
         </div>
 
-        <!-- Profile Picture -->
         <div class="sm:col-span-2">
           <label class="form-label">Profile Picture</label>
           {% if user and user.profile_picture %}

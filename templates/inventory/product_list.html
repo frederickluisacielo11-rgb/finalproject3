@@ -1,21 +1,26 @@
 {% extends 'base.html' %}
+
 {% block title %}Products — Electron Shock{% endblock %}
 {% block page_title %}Products{% endblock %}
 
 {% block content %}
 <div class="space-y-4">
-
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-    <p class="text-sm text-gray-500">{{ products|length }} total product{{ products|length|pluralize }}</p>
-    <a href="{% url 'product_create' %}" class="btn-primary shadow-sm hover:shadow-lg hover:shadow-blue-500/20 hover:-translate-y-1 active:scale-95 transition-all duration-300">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+    <p class="text-sm text-gray-500">
+      {{ products|length }} total product{{ products|length|pluralize }}
+    </p>
+    <a href="{% url 'product_create' %}"
+      class="btn-primary shadow-sm hover:shadow-lg hover:shadow-blue-500/20 hover:-translate-y-1 active:scale-95 transition-all duration-300">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+      </svg>
       Add Product
     </a>
   </div>
 
-  <div class="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
+  <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
     <table class="min-w-full divide-y divide-gray-100">
-      <thead class="bg-gray-50">
+      <thead class="bg-gray-50 dark:bg-gray-700">
         <tr>
           <th class="table-th">#</th>
           <th class="table-th">Image</th>
@@ -28,56 +33,79 @@
           <th class="table-th text-right">Actions</th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-gray-50">
+      <tbody class="divide-y divide-gray-50 dark:divide-gray-700">
         {% for product in products %}
         <tr class="relative border-l-4 border-transparent hover:border-blue-500 hover:bg-gray-50/90 hover:shadow-[0_4px_12px_-5px_rgba(0,0,0,0.05)] transition-all duration-200 group">
-          <td class="table-td text-gray-400 font-mono text-xs align-middle">{{ product.product_id }}</td>
-          
+
+          <td class="table-td text-gray-400 font-mono text-xs align-middle">
+            {{ product.product_id }}
+          </td>
+
           <td class="table-td align-middle">
             <div class="w-20 h-20 rounded-2xl overflow-hidden border border-gray-150 flex-shrink-0 bg-gray-50 shadow-sm group-hover:shadow-md transition-all duration-300">
               {% if product.image %}
-                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover transform group-hover:scale-108 group-hover:rotate-1 transition-transform duration-300"/>
+              <img src="{{ product.image.url }}" alt="{{ product.name }}"
+                class="w-full h-full object-cover transform group-hover:scale-108 group-hover:rotate-1 transition-transform duration-300"/>
               {% else %}
-                <div class="w-full h-full flex items-center justify-center">
-                  <svg class="w-8 h-8 text-gray-300 transition-colors group-hover:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                </div>
+              <div class="w-full h-full flex items-center justify-center">
+                <svg class="w-8 h-8 text-gray-300 transition-colors group-hover:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+              </div>
               {% endif %}
             </div>
           </td>
-          
-          <td class="table-td font-semibold text-gray-800 transition-colors duration-200 group-hover:text-primary align-middle">{{ product.name }}</td>
+
+          <td class="table-td font-semibold text-gray-800 dark:text-white transition-colors duration-200 group-hover:text-primary align-middle">
+            {{ product.name }}
+          </td>
           <td class="table-td text-gray-500 align-middle">{{ product.category.name }}</td>
           <td class="table-td text-gray-500 align-middle">{{ product.brand }}</td>
-          <td class="table-td font-semibold text-gray-800 align-middle">₱{{ product.price }}</td>
-          <td class="table-td font-semibold text-gray-800 align-middle">{{ product.quantity }}</td>
-          
+          <td class="table-td font-semibold text-gray-800 dark:text-white align-middle">₱{{ product.price }}</td>
+          <td class="table-td font-semibold text-gray-800 dark:text-white align-middle">{{ product.quantity }}</td>
+
           <td class="table-td align-middle">
             {% with status=product.get_stock_status %}
-              {% if status == 'In stock' %}<span class="badge-green inline-block transform group-hover:scale-105 group-hover:translate-x-0.5 transition-all duration-200">{{ status }}</span>
-              {% elif status == 'Low stock' %}<span class="badge-amber inline-block transform group-hover:scale-105 group-hover:translate-x-0.5 transition-all duration-200">{{ status }}</span>
-              {% elif status == 'Critical' %}<span class="badge-red inline-block transform group-hover:scale-105 group-hover:translate-x-0.5 transition-all duration-200">{{ status }}</span>
-              {% else %}<span class="badge-red inline-block transform group-hover:scale-105 group-hover:translate-x-0.5 transition-all duration-200">{{ status }}</span>
+              {% if status == 'In stock' %}
+                <span class="badge-green inline-block transform group-hover:scale-105 group-hover:translate-x-0.5 transition-all duration-200">{{ status }}</span>
+              {% elif status == 'Low stock' %}
+                <span class="badge-amber inline-block transform group-hover:scale-105 group-hover:translate-x-0.5 transition-all duration-200">{{ status }}</span>
+              {% elif status == 'Critical' %}
+                <span class="badge-red inline-block transform group-hover:scale-105 group-hover:translate-x-0.5 transition-all duration-200">{{ status }}</span>
+              {% else %}
+                <span class="badge-red inline-block transform group-hover:scale-105 group-hover:translate-x-0.5 transition-all duration-200">{{ status }}</span>
               {% endif %}
             {% endwith %}
           </td>
-          
+
           <td class="table-td text-right align-middle">
             <div class="flex items-center justify-end gap-2">
-              <a href="{% url 'product_update' product.pk %}" class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-primary bg-blue-50 rounded-lg hover:bg-blue-600 hover:text-white hover:shadow-md hover:shadow-blue-500/10 active:scale-95 transition-all duration-200">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+              <a href="{% url 'product_update' product.pk %}"
+                class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-primary bg-blue-50 rounded-lg hover:bg-blue-600 hover:text-white hover:shadow-md hover:shadow-blue-500/10 active:scale-95 transition-all duration-200">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
                 Edit
               </a>
-              <a href="{% url 'product_delete' product.pk %}" class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-red-600 bg-red-50 rounded-lg hover:bg-red-600 hover:text-white hover:shadow-md hover:shadow-red-500/10 active:scale-95 transition-all duration-200">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+
+              <button type="button"
+                class="delete-btn inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-red-600 bg-red-50 rounded-lg hover:bg-red-600 hover:text-white hover:shadow-md hover:shadow-red-500/10 active:scale-95 transition-all duration-200"
+                data-name="{{ product.name }}"
+                data-url="{% url 'product_delete' product.pk %}">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
                 Delete
-              </a>
+              </button>
             </div>
           </td>
         </tr>
         {% empty %}
         <tr>
           <td colspan="9" class="px-4 py-12 text-center text-gray-400">
-            <svg class="w-10 h-10 mx-auto mb-2 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+            <svg class="w-10 h-10 mx-auto mb-2 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+            </svg>
             <p class="text-sm font-medium">No products found</p>
             <a href="{% url 'product_create' %}" class="text-primary text-xs hover:underline mt-1 inline-block">Add your first product</a>
           </td>
@@ -86,6 +114,76 @@
       </tbody>
     </table>
   </div>
-
 </div>
+
+<div id="confirmModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-xl shadow-xl w-full max-w-sm">
+
+    <div class="flex items-center gap-3 p-5 border-b border-gray-100">
+      <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+      </div>
+      <div>
+        <h3 class="font-bold text-gray-800">Confirm Deletion</h3>
+        <p class="text-xs text-gray-400">This action cannot be undone</p>
+      </div>
+    </div>
+
+    <div class="p-5">
+      <p class="text-sm text-gray-600 mb-1">You are about to delete:</p>
+      <p id="modalProductName" class="font-semibold text-gray-800 text-base mb-4"></p>
+      <p class="text-xs text-amber-600 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
+        ⚠ Products with existing orders cannot be deleted.
+      </p>
+    </div>
+
+    <div class="flex items-center gap-3 px-5 pb-5">
+      <form id="deleteForm" method="post" class="flex-1">
+        {% csrf_token %}
+        <button type="submit" id="confirmYes" class="btn-danger w-full">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+          </svg>
+          Yes, Delete
+        </button>
+      </form>
+      <button type="button" id="confirmNo" class="btn-secondary flex-1">
+        Cancel
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const deleteButtons    = document.querySelectorAll('.delete-btn');
+  const confirmModal     = document.getElementById('confirmModal');
+  const modalProductName = document.getElementById('modalProductName');
+  const deleteForm       = document.getElementById('deleteForm');
+  const confirmNo        = document.getElementById('confirmNo');
+
+  deleteButtons.forEach(function(button) {
+    button.addEventListener('click', function() {
+      const productName = button.dataset.name;
+      const deleteUrl   = button.dataset.url;
+
+      modalProductName.textContent = productName;
+      deleteForm.action = deleteUrl;
+
+      confirmModal.classList.remove('hidden');
+    });
+  });
+
+  confirmNo.addEventListener('click', function() {
+    confirmModal.classList.add('hidden');
+  });
+
+  confirmModal.addEventListener('click', function(e) {
+    if (e.target === confirmModal) {
+      confirmModal.classList.add('hidden');
+    }
+  });
+</script>
 {% endblock %}

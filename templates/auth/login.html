@@ -24,7 +24,6 @@
 
   <div class="w-full max-w-md">
 
-    <!-- Logo Card -->
     <div class="text-center mb-8">
       <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-accent shadow-lg mb-4">
         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -35,8 +34,8 @@
       <p class="text-blue-200 text-sm mt-1">Inventory Management System</p>
     </div>
 
-    <!-- Form Card -->
-    <div class="bg-white rounded-2xl shadow-2xl p-8">
+    <!-- FIX: added p-8 so card content is not flush against the edge -->
+    <div class="bg-white rounded-xl shadow border border-gray-200 p-8">
       <h2 class="text-xl font-bold text-gray-800 mb-1">Welcome back</h2>
       <p class="text-gray-500 text-sm mb-6">Sign in to your account to continue</p>
 
@@ -67,6 +66,12 @@
           Sign In
         </button>
       </form>
+
+      <!-- FIX: added link to register page -->
+      <p class="text-center text-sm text-gray-500 mt-5">
+        Don't have an account?
+        <a href="{% url 'register' %}" class="text-primary font-semibold hover:underline">Register</a>
+      </p>
     </div>
 
     <p class="text-center text-blue-200 text-xs mt-6">&copy; 2026 Electron Shock. All rights reserved.</p>
